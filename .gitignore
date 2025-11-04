@@ -451,7 +451,6 @@ log/*.txt
 # Tools
 tools/ImageCropper/**/*.png
 
-config
 debug
 assets/resource/pipeline/note.md
 assets/resource/image/map1/00start.png
@@ -468,3 +467,5 @@ docs/dev
 MFA
 
 tools/dev
+
+deps_official_backup

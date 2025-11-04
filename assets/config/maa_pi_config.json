@@ -1,0 +1,29 @@
+{
+    "resource": "官服",
+    "controller": {
+        "name": "桌面端"
+    },
+    "adb": {
+        "adb_path": "D:/Game/MuMuPlayer/nx_main/adb.exe",
+        "address": "127.0.0.1:16384",
+        "config": {
+            "extras": {
+                "mumu": {
+                    "enable": true,
+                    "index": 0,
+                    "path": "D:/Game/MuMuPlayer"
+                }
+            }
+        }
+    },
+    "task": [
+        {
+            "name": "testOnErr",
+            "option": [],
+            "__vscKey": "8b87cc46-6e53-4886-b235-48d1e3e7024f"
+        }
+    ],
+    "win32": {
+        "hwnd": "0x60928"
+    }
+}
