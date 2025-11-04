@@ -266,7 +266,7 @@ class PostMessageInputHelper:
             for vk_code in pressed_keys:
                 self.key_up(vk_code)
             
-            logger.info(f"[PostMessageInputHelper] ✓ 完成顺序按键")
+            logger.info(f"[PostMessageInputHelper] [OK] 完成顺序按键")
             
         except Exception as e:
             logger.error(f"[PostMessageInputHelper] 顺序按键失败: {e}", exc_info=True)

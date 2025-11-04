@@ -48,7 +48,7 @@ class GameWindowAction(CustomAction):
             # 方法 1: 精确匹配
             hwnd = win32gui.FindWindow(None, self.WINDOW_TITLE_KEYWORD)
             if hwnd and win32gui.IsWindow(hwnd):
-                logger.info(f"[_get_window_handle] ✓ 找到「{self.WINDOW_TITLE_KEYWORD}」窗口: {hwnd} (0x{hwnd:08X})")
+                logger.info(f"[_get_window_handle] [OK] 找到「{self.WINDOW_TITLE_KEYWORD}」窗口: {hwnd} (0x{hwnd:08X})")
                 return hwnd
             
             # 方法 2: 模糊匹配 - 枚举所有窗口查找包含关键字的
@@ -64,7 +64,7 @@ class GameWindowAction(CustomAction):
             if found_windows:
                 hwnd = found_windows[0]
                 title = win32gui.GetWindowText(hwnd)
-                logger.info(f"[_get_window_handle] ✓ 找到包含「{self.WINDOW_TITLE_KEYWORD}」的窗口: {hwnd} (0x{hwnd:08X})")
+                logger.info(f"[_get_window_handle] [OK] 找到包含「{self.WINDOW_TITLE_KEYWORD}」的窗口: {hwnd} (0x{hwnd:08X})")
                 logger.info(f"[_get_window_handle] 窗口标题: '{title}'")
                 return hwnd
             
@@ -235,7 +235,7 @@ class RunWithShift(GameWindowAction):
             logger.info(f"[RunWithShift] 步骤 5: 释放方向键")
             input_helper.key_up(direction_vk)
             
-            logger.info(f"[RunWithShift] ✓ 完成奔跑 {duration:.2f}秒")
+            logger.info(f"[RunWithShift] [OK] 完成奔跑 {duration:.2f}秒")
             logger.info("=" * 60)
             
             return True
@@ -306,7 +306,7 @@ class LongPressKey(GameWindowAction):
             # 执行长按
             input_helper.long_press_key(vk_code, duration)
             
-            logger.info(f"[LongPressKey] ✓ 完成长按")
+            logger.info(f"[LongPressKey] [OK] 完成长按")
             return True
             
         except Exception as e:
@@ -395,7 +395,7 @@ class PressMultipleKeys(GameWindowAction):
             # 执行同时按键
             input_helper.press_multiple_keys(vk_codes, duration)
             
-            logger.info(f"[PressMultipleKeys] ✓ 完成同时按键")
+            logger.info(f"[PressMultipleKeys] [OK] 完成同时按键")
             return True
             
         except Exception as e:

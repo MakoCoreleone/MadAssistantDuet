@@ -213,7 +213,7 @@ def save_example(filename, config):
     """保存示例配置到 JSON 文件"""
     with open(filename, 'w', encoding='utf-8') as f:
         json.dump(config, f, indent=4, ensure_ascii=False)
-    print(f"✓ 已保存: {filename}")
+    print(f"[OK] 已保存: {filename}")
 
 if __name__ == "__main__":
     print("=" * 60)
