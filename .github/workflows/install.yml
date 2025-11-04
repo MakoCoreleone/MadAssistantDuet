@@ -63,11 +63,6 @@ jobs:
   install:
     needs: meta
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        os: [win, macos, linux, android]
-        arch: [aarch64, x86_64]
-      fail-fast: false
 
     steps:
       - uses: actions/checkout@v4
@@ -78,24 +73,22 @@ jobs:
         uses: robinraju/release-downloader@v1
         with:
           repository: MaaXYZ/MaaFramework
-          fileName: "MAA-${{ matrix.os }}-${{ matrix.arch }}*"
+          fileName: "MAA-win-x86_64*"
           latest: true
           out-file-path: "deps"
           extract: true
 
       - name: Download MFAAvalonia
-        if: matrix.os != 'android'
         id: download_mfa
         uses: robinraju/release-downloader@v1
         with:
           repository: SweetSmellFox/MFAAvalonia
-          fileName: "MFAAvalonia-*-${{ (matrix.os == 'win' && 'win') || (matrix.os == 'macos' && 'osx') || (matrix.os == 'linux' && 'linux') }}-${{ (matrix.arch == 'x86_64' && 'x64') || (matrix.arch == 'aarch64' && 'arm64') }}*"
+          fileName: "MFAAvalonia-*-win-x64*"
           latest: true
           out-file-path: "MFA"
           extract: true
 
       - name: Clean up MFAAvalonia archive
-        if: matrix.os != 'android'
         shell: bash
         run: |
           ARCHIVE_FILE_PATH="${{ fromJson(steps.download_mfa.outputs.downloaded_files)[0] }}"
@@ -108,27 +101,18 @@ jobs:
           python -m pip install -r ./requirements.txt
           python ./install.py ${{ needs.meta.outputs.tag }}
 
-          if [[ "${{ matrix.os }}" != "android" ]]; then
-            if [ -d "MFA" ]; then
-              echo "Copying MFA files to install directory..."
-              mkdir -p install
-              rsync -av --ignore-existing MFA/ install/
-            else
-              echo "MFA directory not found, skipping copy."
-            fi
-            if [[ "${{ matrix.os }}" == "win" ]]; then
-              mkdir -p install
-              cp -v "tools/DependencySetup_依赖库安装.bat" install/
-              cp -v "tools/PythonDependencySetup_Python依赖安装.bat" install/
-              cp -v "requirements_win.txt" install/
-            fi
-          else
-            echo "Skipping copy MFA for Android."
-          fi
+          echo "Copying MFA files to install directory..."
+          mkdir -p install
+          rsync -av --ignore-existing MFA/ install/
+
+          mkdir -p install
+          cp -v "tools/DependencySetup_依赖库安装.bat" install/
+          cp -v "tools/PythonDependencySetup_Python依赖安装.bat" install/
+          cp -v "requirements_win.txt" install/
 
       - uses: actions/upload-artifact@v4
         with:
-          name: MAD-${{ matrix.os }}-${{ matrix.arch }}
+          name: MAD-win-x86_64
           path: "install"
 
   changelog:
