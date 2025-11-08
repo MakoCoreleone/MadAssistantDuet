@@ -25,24 +25,39 @@
         "expected": ["确定"],
         "action": "Click",
         "post_delay": 1000,
-        "next": ["def_map1_again"]
+        "next": ["def_map1_again","def_map1_again_template","def_map1_confirm"]
     },
     "def_map1_again": {
         "recognition": "OCR",
         "expected": "再次进行",
         "action": "Click",
         "post_delay": 1000,
-        "next": ["def_map1_start"]
+        "next": ["def_map1_start", "def_map1_again"]
+    },
+    "def_map1_again_template": {
+        "recognition": "TemplateMatch",
+        "template": "common/再次进行.png",
+        "action": "Click",
+        "post_delay": 1000,
+        "next": ["def_map1_start", "def_map1_again_template"]
     },
     "def_map1_start": {
         "recognition": "OCR",
         "expected": "开始挑战",
         "action": "Click",
-        "next": ["def_map1_in_battle"]
+        "next": ["def_map1_in_battle", "def_map1_in_battle_template","def_map1_start"]
     },
     "def_map1_in_battle":{
         "recognition": "OCR",
-        "expected": "前往目标点",
+        "expected": ["前往目标点","目标点"],
+        "post_delay": 2000,
+        "action": "DoNothing",
+        "next": ["def_map1_a1"]
+    },
+    "def_map1_in_battle_template":{
+        "recognition": "TemplateMatch",
+        "template": "common/游戏内退出.png",
+        "roi" : [0,0,131,133],
         "post_delay": 2000,
         "action": "DoNothing",
         "next": ["def_map1_a1"]
@@ -110,11 +125,11 @@
         "custom_action_param": {
             "check_interval": 5000,
             "total_timeout": 200000,
-            "target_node": "def_map1_again",
+            "target_node": ["def_map1_again","def_map1_again_template"],
             "interrupt_node": "autoBattle_for_win"
         },
         "on_error": ["def_map1_entry"],
         "next": []
     }
-
+    
 }
