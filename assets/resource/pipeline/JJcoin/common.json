@@ -140,7 +140,7 @@
         "custom_action_param":{
             "check_interval": 5000,
             "total_timeout": 420000,
-            "target_node": "JJcoin_finish",
+            "target_node": ["JJcoin_finish"],
             "post_rounds":["JJcoin_continue_1"]
         },
         "on_error": ["JJcoin_entry"],

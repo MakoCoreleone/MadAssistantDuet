@@ -6,10 +6,12 @@ PostMessage 自定义动作模块
 """
 
 from .actions import RunWithShift, LongPressKey, PressMultipleKeys, RunWithJump
+from .JJcoin_action import JsonActionSequence
 
 __all__ = [
     'RunWithShift',
     'LongPressKey',
     'PressMultipleKeys',
     'RunWithJump',
+    'JsonActionSequence',
 ]

@@ -2,7 +2,7 @@
     "ResetPosition": {
         "recognition": "DirectHit",
         "action": "Custom",
-        "custom_action": "ResetCharacterPositionTemp",
+        "custom_action": "ResetCharacterPosition",
         "custom_action_param":{},
         "next": []
     },

@@ -10,6 +10,8 @@ from maa.context import Context
 import logging
 import json
 
+# 导入全局配置
+from config import GAME_CONFIG
 
 # 获取日志记录器
 logger = logging.getLogger(__name__)
@@ -39,14 +41,11 @@ class SetDodgeKey(CustomAction):
             # 获取闪避键虚拟键码(现在直接是 int)
             dodge_key_vk = params.get("dodge_key", 0x10)  # 默认 Shift = 0x10
             
-            # 导入 main 模块以访问全局配置
-            import main
-            
             # 保存到全局配置
-            main.GAME_CONFIG["dodge_key"] = dodge_key_vk
+            GAME_CONFIG["dodge_key"] = dodge_key_vk
             
             logger.info(f"[SetDodgeKey] [OK] 闪避键已设置为: VK=0x{dodge_key_vk:02X} ({dodge_key_vk})")
-            logger.info(f"[SetDodgeKey] 当前配置: {main.GAME_CONFIG}")
+            logger.info(f"[SetDodgeKey] 当前配置: {GAME_CONFIG}")
             
             # 强制刷新截图缓存，避免后续节点使用旧图
             logger.info(f"[SetDodgeKey] 刷新截图缓存...")
@@ -96,15 +95,12 @@ class SetAutoBattleMode(CustomAction):
                 logger.error(f"[SetAutoBattleMode] 无效的模式值: {auto_battle_mode}，仅支持 0 或 1")
                 return False
             
-            # 导入 main 模块以访问全局配置
-            import main
-            
             # 保存到全局配置
-            main.GAME_CONFIG["auto_battle_mode"] = auto_battle_mode
+            GAME_CONFIG["auto_battle_mode"] = auto_battle_mode
             
             mode_desc = "循环按E键" if auto_battle_mode == 0 else "什么也不做"
             logger.info(f"[SetAutoBattleMode] [OK] 自动战斗模式已设置为: {auto_battle_mode} ({mode_desc})")
-            logger.info(f"[SetAutoBattleMode] 当前配置: {main.GAME_CONFIG}")
+            logger.info(f"[SetAutoBattleMode] 当前配置: {GAME_CONFIG}")
             
             # 强制刷新截图缓存，避免后续节点使用旧图
             logger.info(f"[SetAutoBattleMode] 刷新截图缓存...")
@@ -154,14 +150,11 @@ class SetBattleRounds(CustomAction):
                 logger.error(f"[SetBattleRounds] 无效的轮数值: {battle_rounds}，必须是正整数")
                 return False
             
-            # 导入 main 模块以访问全局配置
-            import main
-            
             # 保存到全局配置
-            main.GAME_CONFIG["battle_rounds"] = battle_rounds
+            GAME_CONFIG["battle_rounds"] = battle_rounds
             
             logger.info(f"[SetBattleRounds] [OK] 战斗轮数已设置为: {battle_rounds}")
-            logger.info(f"[SetBattleRounds] 当前配置: {main.GAME_CONFIG}")
+            logger.info(f"[SetBattleRounds] 当前配置: {GAME_CONFIG}")
             
             # 强制刷新截图缓存，避免后续节点使用旧图
             logger.info(f"[SetBattleRounds] 刷新截图缓存...")

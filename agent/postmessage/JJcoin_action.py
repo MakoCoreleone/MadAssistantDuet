@@ -17,9 +17,8 @@ from maa.agent.agent_server import AgentServer
 import win32con
 import sys
 
-# 导入主模块来访问全局配置
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-import main
+# 导入全局配置
+from config import GAME_CONFIG
 
 logger = logging.getLogger(__name__)
 
@@ -95,7 +94,7 @@ class JsonActionSequence(CustomAction):
             
             # 调试信息：打印 argv 的类型和内容
             logger.info(f"[JsonActionSequence] argv 类型: {type(argv)}")
-            logger.trace(f"[JsonActionSequence] argv 内容: {argv}")
+            logger.debug(f"[JsonActionSequence] argv 内容: {argv}")
             
             # 尝试不同的参数获取方式
             if hasattr(argv, 'custom_action_param') and argv.custom_action_param:
@@ -157,7 +156,7 @@ class JsonActionSequence(CustomAction):
             logger.info(f"  动作数量: {len(actions)} 个")
             
             # 从全局配置获取闪避键
-            dodge_vk = main.GAME_CONFIG.get("dodge_key", win32con.VK_SHIFT)
+            dodge_vk = GAME_CONFIG.get("dodge_key", win32con.VK_SHIFT)
             logger.info(f"[JsonActionSequence] 使用闪避键: VK={dodge_vk} (0x{dodge_vk:02X}) - {self._vk_to_name(dodge_vk)}")
             
             # 处理动作序列，将按键字符串转换为虚拟键码，并映射闪避键
@@ -337,7 +336,7 @@ class JsonActionSequence(CustomAction):
                 
                 # 执行按键操作
                 current_relative_time = time.time() - start_time
-                logger.info(f"[{sequence_name}] 动作 {i+1:2d}/{len(actions)}: {action_type:8} {self._key_to_str(key):5} "
+                logger.debug(f"[{sequence_name}] 动作 {i+1:2d}/{len(actions)}: {action_type:8} {self._key_to_str(key):5} "
                           f"(计划: {action_time:6.3f}s, 实际: {current_relative_time:6.3f}s)")
                 
                 # 执行按键操作

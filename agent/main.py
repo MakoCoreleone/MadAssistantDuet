@@ -21,17 +21,13 @@ print(f"Python 路径: {sys.path[:3]}")  # 只打印前3个
 from maa.agent.agent_server import AgentServer
 from maa.toolkit import Toolkit
 
-# 全局配置变量
-GAME_CONFIG = {
-    # "dodge_key": win32con.VK_RBUTTON  # 默认闪避键为 右键 (0x02)
-    "dodge_key": 160,  # 左 Shift 键 (0xA0)
-    "auto_battle_mode": 0,  # 自动战斗模式：0=循环按E键, 1=什么也不做
-    "battle_rounds": 3  # 战斗轮数
-}
+# 导入全局配置
+from config import GAME_CONFIG
 
 # 重要：必须在 AgentServer.start_up() 之前导入，以便装饰器注册自定义 Action 和 Recognition
 import common
 import setting
+from postmessage import RunWithShift, LongPressKey, PressMultipleKeys, RunWithJump
 import tools
 
 

@@ -20,9 +20,8 @@ import win32con
 import sys
 import os
 
-# 导入主模块以获取全局配置 (闪避键等)
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-import main
+# 导入全局配置
+from config import GAME_CONFIG
 
 logger = logging.getLogger(__name__)
 
@@ -177,7 +176,7 @@ class RunWithShift(CustomAction):
         dodge_delay = params.get("dodge_delay", 0.05)
         
         # 从全局配置获取闪避键(现在是虚拟键码 int)
-        dodge_vk = main.GAME_CONFIG.get("dodge_key", win32con.VK_SHIFT)
+        dodge_vk = GAME_CONFIG.get("dodge_key", win32con.VK_SHIFT)
         
         logger.info("=" * 60)
         logger.info(f"[RunWithShift] 开始奔跑")
@@ -408,7 +407,7 @@ class RunWithJump(CustomAction):
         jump_press_time = params.get("jump_press_time", 0.1)
         
         # 从全局配置获取闪避键(现在是虚拟键码 int)
-        dodge_vk = main.GAME_CONFIG.get("dodge_key", win32con.VK_SHIFT)
+        dodge_vk = GAME_CONFIG.get("dodge_key", win32con.VK_SHIFT)
         
         logger.info("=" * 60)
         logger.info(f"[RunWithJump] 开始边跑边跳")

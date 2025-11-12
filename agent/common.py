@@ -13,6 +13,9 @@ import json
 import os
 from datetime import datetime
 
+# 导入全局配置
+from config import GAME_CONFIG
+
 # 获取日志记录器
 logger = logging.getLogger(__name__)
 
@@ -45,21 +48,21 @@ class ResetCharacterPosition(CustomAction):
             elif isinstance(argv.custom_action_param, dict):
                 pipeline_override = argv.custom_action_param.get("pipeline_override", {}) or {}
 
-            logger.info("=" * 60)
+            logger.debug("=" * 60)
             logger.info("[ResetCharacterPosition] 通过 run_task 执行节点 'Reset_Entry'")
             if pipeline_override:
-                logger.info(f"  使用 pipeline_override: {list(pipeline_override.keys())}")
+                logger.debug(f"  使用 pipeline_override: {list(pipeline_override.keys())}")
 
             # 同步执行任务：失败将返回 None，成功返回 TaskDetail
             task_detail = context.run_task("Reset_Entry", pipeline_override=pipeline_override)
 
             if not task_detail:
                 logger.error("[ResetCharacterPosition] 任务执行失败 (task_id = None)")
-                logger.info("=" * 60)
+                logger.debug("=" * 60)
                 return False
 
             logger.info(f"[ResetCharacterPosition] 任务执行成功, task_id={task_detail.task_id}")
-            logger.info("=" * 60)
+            logger.debug("=" * 60)
             return True
 
         except Exception as e:
@@ -95,10 +98,9 @@ class AutoBattle(CustomAction):
             return False
 
         # 允许浮点数（秒），内部转换为毫秒兼容现有逻辑
-        check_interval_sec = float(params.get("check_interval", 5.0))
-        total_timeout_sec = float(params.get("total_timeout", 180.0))
-        check_interval = max(0, int(check_interval_sec * 1000))
-        total_timeout = max(0, int(total_timeout_sec * 1000))
+        check_interval = float(params.get("check_interval", 5000))
+        total_timeout = float(params.get("total_timeout", 180000))
+
 
         target_nodes = params.get("target_node", ["again_for_win"])  # 要检测的目标节点（支持数组）
         if isinstance(target_nodes, str):
@@ -134,7 +136,7 @@ class AutoBattle(CustomAction):
                     return False
                 
                 # 尝试检测目标节点
-                logger.info(f"[AutoBattle] 第 {loop_count} 次检测 {target_nodes}... (已用时: {int(elapsed)}ms / {total_timeout}ms)")
+                logger.debug(f"[AutoBattle] 第 {loop_count} 次检测 {target_nodes}... (已用时: {int(elapsed)}ms / {total_timeout}ms)")
                 
                 # 获取最新截图
                 sync_job = context.tasker.controller.post_screencap()
@@ -146,7 +148,7 @@ class AutoBattle(CustomAction):
                 reco_result = None
                 
                 for target_node in target_nodes:
-                    logger.info(f"[AutoBattle] -> 尝试识别节点: '{target_node}'")
+                    logger.debug(f"[AutoBattle] -> 尝试识别节点: '{target_node}'")
                     current_reco_result = context.run_recognition(target_node, image)
                     
                     # 检查识别结果是否有效（box 不为 None 且宽高大于 0）
@@ -156,7 +158,7 @@ class AutoBattle(CustomAction):
                         reco_result = current_reco_result
                         break
                     else:
-                        logger.info(f"[AutoBattle] -> [X] 未识别到节点: '{target_node}'")
+                        logger.debug(f"[AutoBattle] -> [X] 未识别到节点: '{target_node}'")
                 
                 # 检查是否有任何一个节点被识别到
                 if detected_node:
@@ -164,24 +166,23 @@ class AutoBattle(CustomAction):
                     return True
                 else:
                     # 从全局配置获取自动战斗模式
-                    import main
-                    auto_battle_mode = main.GAME_CONFIG.get("auto_battle_mode", 0)
+                    auto_battle_mode = GAME_CONFIG.get("auto_battle_mode", 0)
                     
                     if auto_battle_mode == 0:
                         # 模式 0: 循环按 E 键（默认）
-                        logger.info(f"[AutoBattle] -> 模式 0: 执行自动战斗（按 E 键）")
+                        logger.debug(f"[AutoBattle] -> 模式 0: 执行自动战斗（按 E 键）")
                         click_job = context.tasker.controller.post_click_key(69)  # E 键
                         click_job.wait()
                     elif auto_battle_mode == 1:
                         # 模式 1: 什么也不做
-                        logger.info(f"[AutoBattle] -> 模式 1: 什么也不做，仅等待")
+                        logger.debug(f"[AutoBattle] -> 模式 1: 什么也不做，仅等待")
                     else:
                         logger.warning(f"[AutoBattle] -> 未知模式 {auto_battle_mode}，默认执行模式 0")
                         click_job = context.tasker.controller.post_click_key(69)  # E 键
                         click_job.wait()
 
                     # 等待检测间隔
-                    logger.info(f"[AutoBattle] -> 等待检测间隔 {check_interval}ms...")
+                    logger.debug(f"[AutoBattle] -> 等待检测间隔 {check_interval}ms...")
                     time.sleep(check_interval / 1000.0)
                     
         except Exception as e:
@@ -215,8 +216,7 @@ class MultiRoundsAutoBattle(CustomAction):
             return False
         
         # 从全局配置获取战斗轮数
-        import main
-        total_rounds = main.GAME_CONFIG.get("battle_rounds", 3)  # 默认 3 轮
+        total_rounds = GAME_CONFIG.get("battle_rounds", 3)  # 默认 3 轮
         round_timeout = params.get("round_timeout", 420000)  # 每轮超时 420s
         post_rounds = params.get("post_rounds", [])  # 每轮后的处理节点列表
         
