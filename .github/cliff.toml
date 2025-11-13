@@ -66,10 +66,6 @@ body = """
 {%- endif %}
 """
 
-# 尾部
-footer = """
-"""
-
 # 在 changelog 末尾追加镜像下载链接
 footer = """
 [已有 Mirror酱 CDK？点击前往高速下载](https://mirrorchyan.com/zh/projects?rid=MadAssistantDuet&channel=stable)
