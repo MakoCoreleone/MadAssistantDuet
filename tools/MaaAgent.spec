@@ -37,6 +37,19 @@ except Exception:
     # If maa isn't importable at spec build time, leave datas_list empty.
     datas_list = []
 
+# Also include agent/postmessage/actionJSON directory (pipeline action JSONs)
+try:
+    action_json_dir = os.path.join(spec_root, 'agent', 'postmessage', 'actionJSON')
+    if os.path.exists(action_json_dir):
+        for root, dirs, files in os.walk(action_json_dir):
+            for fname in files:
+                src = os.path.join(root, fname)
+                rel = os.path.relpath(root, action_json_dir)
+                dest = os.path.join('postmessage', 'actionJSON', rel) if rel != '.' else os.path.join('postmessage', 'actionJSON')
+                datas_list.append((src, dest))
+except Exception:
+    pass
+
 
 a = Analysis(
     [os.path.join(spec_root, 'agent', 'main.py')],

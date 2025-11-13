@@ -215,39 +215,69 @@ class JsonActionSequence(CustomAction):
             str: JSON文件的完整路径，如果找不到返回None
         """
         try:
-            # 获取当前脚本所在目录
-            current_dir = os.path.dirname(os.path.abspath(__file__))
-            
-            # 构建actionJSON目录路径
-            action_json_dir = os.path.join(current_dir, "actionJSON")
-            
-            # 如果json_file已经是完整路径，直接使用
+            # 如果给出的是绝对路径，直接检查
             if os.path.isabs(json_file):
                 if os.path.exists(json_file):
                     return json_file
-            else:
-                # 尝试在actionJSON目录下查找
-                json_file_path = os.path.join(action_json_dir, json_file)
+
+            candidates = []
+
+            # 1) 默认：相对于当前模块的 actionJSON 目录
+            module_dir = os.path.dirname(os.path.abspath(__file__))
+            candidates.append(os.path.join(module_dir, 'actionJSON'))
+
+            # 2) 如果是被 PyInstaller 冻结的 exe，资源通常提取到 sys._MEIPASS
+            meipass = getattr(sys, '_MEIPASS', None)
+            if meipass:
+                # 保守地尝试几个可能的相对位置
+                candidates.append(os.path.join(meipass, 'postmessage', 'actionJSON'))
+                candidates.append(os.path.join(meipass, 'agent', 'postmessage', 'actionJSON'))
+                candidates.append(os.path.join(meipass, 'actionJSON'))
+
+            # 3) 可执行文件所在目录（便于便携版将资源放在 exe 同级的 agent 目录）
+            try:
+                exe_dir = os.path.dirname(sys.executable)
+                candidates.append(os.path.join(exe_dir, 'postmessage', 'actionJSON'))
+                candidates.append(os.path.join(exe_dir, 'agent', 'postmessage', 'actionJSON'))
+            except Exception:
+                pass
+
+            # 4) 当前工作目录下的可能位置
+            candidates.append(os.path.join(os.getcwd(), 'postmessage', 'actionJSON'))
+            candidates.append(os.path.join(os.getcwd(), 'agent', 'postmessage', 'actionJSON'))
+
+            # 去重并检查
+            seen = set()
+            for cand in candidates:
+                if not cand or cand in seen:
+                    continue
+                seen.add(cand)
+                # 尝试直接文件名匹配
+                json_file_path = os.path.join(cand, json_file)
                 if os.path.exists(json_file_path):
                     return json_file_path
-                
-                # 如果文件名没有扩展名，尝试添加.json
+
+                # 如果没有扩展名，尝试追加 .json
                 if not json_file.lower().endswith('.json'):
-                    json_file_path = os.path.join(action_json_dir, json_file + '.json')
+                    json_file_path = os.path.join(cand, json_file + '.json')
                     if os.path.exists(json_file_path):
                         return json_file_path
-            
-            logger.error(f"[JsonActionSequence] 找不到JSON文件: {json_file}")
-            logger.error(f"  搜索目录: {action_json_dir}")
-            # 列出目录内容以便调试
-            if os.path.exists(action_json_dir):
-                files = os.listdir(action_json_dir)
-                logger.error(f"  目录内容: {files}")
-            else:
-                logger.error(f"  目录不存在: {action_json_dir}")
-            
+
+            # 未找到，记录调试信息
+            logger.error(f"[JsonActionSequence] 无法找到JSON文件: {json_file}")
+            logger.error(f"  搜索候选目录: {candidates}")
+            for cand in candidates:
+                if os.path.exists(cand):
+                    try:
+                        files = os.listdir(cand)
+                        logger.error(f"  目录 {cand} 内容: {files}")
+                    except Exception as e:
+                        logger.error(f"  列出目录 {cand} 时出错: {e}")
+                else:
+                    logger.error(f"  目录不存在: {cand}")
+
             return None
-            
+
         except Exception as e:
             logger.error(f"[JsonActionSequence] 获取JSON文件路径失败: {e}")
             return None
