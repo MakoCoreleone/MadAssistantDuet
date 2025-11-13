@@ -45,18 +45,20 @@
         {
             "name": "65级mod（扼守）",
             "entry": "def_map1_entry",
+            "advanced": ["单轮战斗超时"],
             "doc": "进入指定副本后，即可启动，会先自动退出一次复位"
         },
         {
             "name": "驱离通用",
             "entry": "expulsion_entry",
+            "advanced": ["单轮战斗超时"],
             "doc": "驱离本的通用流程，进入副本后再启动脚本"
         },
         {
             "name": "60级皎皎币",
             "entry": "JJcoin_rounds",
             "doc": "60级皎皎币副本流程，进入副本后再启动脚本",
-            "option": ["战斗轮数设置"]
+            "advanced": ["战斗轮数设置","单轮战斗超时（每一轮）"]
         }
     ],
     "option": {
@@ -169,111 +171,72 @@
                 }
             ],
             "default_case": "循环E"
-        },
+        }
+    }
+    ,
+    "advanced": {
         "战斗轮数设置": {
-            "cases": [
-                {
-                    "name": "1轮",
-                    "pipeline_override": {
-                        "JJcoin_rounds": {
-                            "custom_action_param": {
-                                "battle_rounds": 1
-                            }
-                        }
-                    }
-                },
-                {
-                    "name": "2轮",
-                    "pipeline_override": {
-                        "JJcoin_rounds": {
-                            "custom_action_param": {
-                                "battle_rounds": 2
-                            }
-                        }
-                    }
-                },
-                {
-                    "name": "3轮",
-                    "pipeline_override": {
-                        "JJcoin_rounds": {
-                            "custom_action_param": {
-                                "battle_rounds": 3
-                            }
-                        }
-                    }
-                },
-                {
-                    "name": "4轮",
-                    "pipeline_override": {
-                        "JJcoin_rounds": {
-                            "custom_action_param": {
-                                "battle_rounds": 4
-                            }
-                        }
-                    }
-                },
-                {
-                    "name": "5轮",
-                    "pipeline_override": {
-                        "JJcoin_rounds": {
-                            "custom_action_param": {
-                                "battle_rounds": 5
-                            }
-                        }
-                    }
-                },
-                {
-                    "name": "6轮",
-                    "pipeline_override": {
-                        "JJcoin_rounds": {
-                            "custom_action_param": {
-                                "battle_rounds": 6
-                            }
-                        }
-                    }
-                },
-                {
-                    "name": "7轮",
-                    "pipeline_override": {
-                        "JJcoin_rounds": {
-                            "custom_action_param": {
-                                "battle_rounds": 7
-                            }
-                        }
-                    }
-                },
-                {
-                    "name": "8轮",
-                    "pipeline_override": {
-                        "JJcoin_rounds": {
-                            "custom_action_param": {
-                                "battle_rounds": 8
-                            }
-                        }
-                    }
-                },
-                {
-                    "name": "9轮",
-                    "pipeline_override": {
-                        "JJcoin_rounds": {
-                            "custom_action_param": {
-                                "battle_rounds": 9
-                            }
-                        }
-                    }
-                },
-                {
-                    "name": "10轮",
-                    "pipeline_override": {
-                        "JJcoin_rounds": {
-                            "custom_action_param": {
-                                "battle_rounds": 10
-                            }
-                        }
+            "field": [
+                "作战轮数"
+            ],
+            "type": [
+                "int"
+            ],
+            "default": [
+                "3"
+            ],
+            "pipeline_override": {
+                "JJcoin_rounds": {
+                    "custom_action_param": {
+                        "battle_rounds": "{作战轮数}"
                     }
                 }
+            },
+            "doc": "设置皎皎币副本的战斗轮数"
+        },
+        "单轮战斗超时":{
+            "field": [
+                "单轮战斗超时（毫秒）"
             ],
-            "default_case": "3轮"
+            "type": [
+                "int"
+            ],
+            "default": [
+                "200000"
+            ],
+            "pipeline_override": {
+                "def_map1_auto_battle": {
+                    "custom_action_param": {
+                        "total_timeout": "{单轮战斗超时（毫秒）}"
+                    }
+                },
+                "expulsion_auto_battle": {
+                    "custom_action_param": {
+                        "total_timeout": "{单轮战斗超时（毫秒）}"
+                    }
+                }
+            },
+            "doc": "设置皎皎币单轮战斗的超时时间，单位为毫秒"
+        },
+        "单轮战斗超时（每一轮）":{
+            "field": [
+                "单轮战斗超时（每一轮）（毫秒）"
+            ],
+            "type": [
+                "int"
+            ],
+            "default": [
+                "420000"
+            ],
+            "pipeline_override": {
+                "JJcoin_taskcheck": {
+                    "custom_action_param": {
+                        "total_timeout": "{单轮战斗超时（每一轮）（毫秒）}"
+                    }
+                }
+            },
+            "doc": "设置皎皎币整体任务的超时时间，单位为毫秒"
         }
+
     }
 }
