@@ -178,12 +178,12 @@ class RunWithShift(CustomAction):
         # 从全局配置获取闪避键(现在是虚拟键码 int)
         dodge_vk = GAME_CONFIG.get("dodge_key", win32con.VK_SHIFT)
         
-        logger.info("=" * 60)
+        logger.debug("=" * 60)
         logger.info(f"[RunWithShift] 开始奔跑")
-        logger.info(f"  方向: {direction}")
-        logger.info(f"  持续时长: {duration:.2f}秒")
-        logger.info(f"  闪避键延迟: {dodge_delay:.3f}秒")
-        logger.info(f"  使用闪避键: VK={dodge_vk} (0x{dodge_vk:02X})")
+        logger.debug(f"  方向: {direction}")
+        logger.debug(f"  持续时长: {duration:.2f}秒")
+        logger.debug(f"  闪避键延迟: {dodge_delay:.3f}秒")
+        logger.debug(f"  使用闪避键: VK={dodge_vk} (0x{dodge_vk:02X})")
         
         try:
             controller = context.tasker.controller
@@ -192,10 +192,10 @@ class RunWithShift(CustomAction):
 
             direction_vk = direction_to_vk(direction)
             
-            logger.info(f"[RunWithShift] 方向键 VK={direction_vk}, 闪避键 VK={dodge_vk}")
+            logger.debug(f"[RunWithShift] 方向键 VK={direction_vk}, 闪避键 VK={dodge_vk}")
             
             # 1. 按下方向键
-            logger.info(f"[RunWithShift] 步骤 1: 按下方向键 '{direction}'")
+            logger.debug(f"[RunWithShift] 步骤 1: 按下方向键 '{direction}'")
             controller.post_key_down(direction_vk).wait()
             
             # 2. 短暂延迟
@@ -204,23 +204,23 @@ class RunWithShift(CustomAction):
                 time.sleep(dodge_delay)
             
             # 3. 按下闪避键
-            logger.info(f"[RunWithShift] 步骤 2: 按下闪避键 (VK=0x{dodge_vk:02X})")
+            logger.debug(f"[RunWithShift] 步骤 2: 按下闪避键 (VK=0x{dodge_vk:02X})")
             controller.post_key_down(dodge_vk).wait()
             
             # 4. 保持按下状态
-            logger.info(f"[RunWithShift] 步骤 3: 保持 {duration:.2f}秒...")
+            logger.debug(f"[RunWithShift] 步骤 3: 保持 {duration:.2f}秒...")
             time.sleep(duration)
             
             # 5. 释放闪避键
-            logger.info(f"[RunWithShift] 步骤 4: 释放闪避键")
+            logger.debug(f"[RunWithShift] 步骤 4: 释放闪避键")
             controller.post_key_up(dodge_vk).wait()
             
             # 6. 释放方向键
-            logger.info(f"[RunWithShift] 步骤 5: 释放方向键")
+            logger.debug(f"[RunWithShift] 步骤 5: 释放方向键")
             controller.post_key_up(direction_vk).wait()
             
             logger.info(f"[RunWithShift] [OK] 完成奔跑 {duration:.2f}秒")
-            logger.info("=" * 60)
+            logger.debug("=" * 60)
             
             return True
             
@@ -332,7 +332,7 @@ class PressMultipleKeys(CustomAction):
             return False
         
         logger.info(f"[PressMultipleKeys] 同时按下 {len(keys)} 个键，持续 {duration:.2f}秒")
-        logger.info(f"  按键列表: {keys}")
+        logger.debug(f"  按键列表: {keys}")
         
         try:
             controller = context.tasker.controller
@@ -409,23 +409,23 @@ class RunWithJump(CustomAction):
         # 从全局配置获取闪避键(现在是虚拟键码 int)
         dodge_vk = GAME_CONFIG.get("dodge_key", win32con.VK_SHIFT)
         
-        logger.info("=" * 60)
+        logger.debug("=" * 60)
         logger.info(f"[RunWithJump] 开始边跑边跳")
-        logger.info(f"  方向: {direction}")
-        logger.info(f"  总持续时长: {duration:.2f}秒")
-        logger.info(f"  闪避键延迟: {dodge_delay:.3f}秒")
-        logger.info(f"  跳跃间隔: {jump_interval:.2f}秒")
-        logger.info(f"  跳跃按键时长: {jump_press_time:.3f}秒")
-        logger.info(f"  使用闪避键: VK={dodge_vk} (0x{dodge_vk:02X})")
+        logger.debug(f"  方向: {direction}")
+        logger.debug(f"  总持续时长: {duration:.2f}秒")
+        logger.debug(f"  闪避键延迟: {dodge_delay:.3f}秒")
+        logger.debug(f"  跳跃间隔: {jump_interval:.2f}秒")
+        logger.debug(f"  跳跃按键时长: {jump_press_time:.3f}秒")
+        logger.debug(f"  使用闪避键: VK={dodge_vk} (0x{dodge_vk:02X})")
         
         try:
             controller = context.tasker.controller
             direction_vk = direction_to_vk(direction)
             
-            logger.info(f"[RunWithJump] 方向键 VK={direction_vk}, 闪避键 VK={dodge_vk}")
+            logger.debug(f"[RunWithJump] 方向键 VK={direction_vk}, 闪避键 VK={dodge_vk}")
             
             # 1. 按下方向键
-            logger.info(f"[RunWithJump] 步骤 1: 按下方向键 '{direction}'")
+            logger.debug(f"[RunWithJump] 步骤 1: 按下方向键 '{direction}'")
             controller.post_key_down(direction_vk).wait()
             
             # 2. 短暂延迟后按下闪避键
@@ -433,11 +433,11 @@ class RunWithJump(CustomAction):
                 logger.debug(f"[RunWithJump] 等待 {dodge_delay:.3f}秒...")
                 time.sleep(dodge_delay)
             
-            logger.info(f"[RunWithJump] 步骤 2: 按下闪避键 (VK=0x{dodge_vk:02X})")
+            logger.debug(f"[RunWithJump] 步骤 2: 按下闪避键 (VK=0x{dodge_vk:02X})")
             controller.post_key_down(dodge_vk).wait()
             
             # 3. 周期性跳跃，直到总时长结束
-            logger.info(f"[RunWithJump] 步骤 3: 开始周期性跳跃...")
+            logger.debug(f"[RunWithJump] 步骤 3: 开始周期性跳跃...")
             start_time = time.time()
             jump_count = 0
             next_jump_time = start_time + jump_interval
@@ -448,14 +448,14 @@ class RunWithJump(CustomAction):
                 
                 # 检查是否达到总时长
                 if elapsed_time >= duration:
-                    logger.info(f"[RunWithJump] 达到总时长 {duration:.2f}秒，停止跳跃")
+                    logger.debug(f"[RunWithJump] 达到总时长 {duration:.2f}秒，停止跳跃")
                     break
                 
                 # 检查是否该跳跃了
                 if current_time >= next_jump_time:
                     jump_count += 1
                     remaining_time = duration - elapsed_time
-                    logger.info(f"[RunWithJump] -> 第 {jump_count} 次跳跃 (剩余: {remaining_time:.2f}秒)")
+                    logger.debug(f"[RunWithJump] -> 第 {jump_count} 次跳跃 (剩余: {remaining_time:.2f}秒)")
                     
                     # 按下空格键
                     controller.post_key_down(win32con.VK_SPACE).wait()
@@ -469,15 +469,15 @@ class RunWithJump(CustomAction):
                     time.sleep(0.01)
             
             # 4. 释放闪避键
-            logger.info(f"[RunWithJump] 步骤 4: 释放闪避键")
+            logger.debug(f"[RunWithJump] 步骤 4: 释放闪避键")
             controller.post_key_up(dodge_vk).wait()
             
             # 5. 释放方向键
-            logger.info(f"[RunWithJump] 步骤 5: 释放方向键")
+            logger.debug(f"[RunWithJump] 步骤 5: 释放方向键")
             controller.post_key_up(direction_vk).wait()
             
             logger.info(f"[RunWithJump] [OK] 完成边跑边跳 {duration:.2f}秒，共跳跃 {jump_count} 次")
-            logger.info("=" * 60)
+            logger.debug("=" * 60)
             
             return True
             

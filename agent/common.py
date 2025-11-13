@@ -115,7 +115,7 @@ class AutoBattle(CustomAction):
         logger.info("=" * 50)
         logger.info("[AutoBattle] 开始战斗循环检测")
         logger.info(f"  检测间隔: {check_interval}ms, 总超时: {total_timeout}ms")
-        logger.info(f"  目标节点: {target_nodes}, 中断节点: {interrupt_node}")
+        # logger.info(f"  目标节点: {target_nodes}, 中断节点: {interrupt_node}")
         
         try:
             # 开始循环检测目标节点
@@ -136,7 +136,7 @@ class AutoBattle(CustomAction):
                     return False
                 
                 # 尝试检测目标节点
-                logger.debug(f"[AutoBattle] 第 {loop_count} 次检测 {target_nodes}... (已用时: {int(elapsed)}ms / {total_timeout}ms)")
+                logger.info(f"[AutoBattle] 第 {loop_count} 次检测 {target_nodes}... (已用时: {int(elapsed)}ms / {total_timeout}ms)")
                 
                 # 获取最新截图
                 sync_job = context.tasker.controller.post_screencap()
@@ -149,14 +149,22 @@ class AutoBattle(CustomAction):
                 
                 for target_node in target_nodes:
                     logger.debug(f"[AutoBattle] -> 尝试识别节点: '{target_node}'")
+                    # 新版 run_recognition 总是返回 RecognitionDetail，使用 .hit 判断是否命中
                     current_reco_result = context.run_recognition(target_node, image)
-                    
-                    # 检查识别结果是否有效（box 不为 None 且宽高大于 0）
-                    if current_reco_result and current_reco_result.box and current_reco_result.box.w > 0 and current_reco_result.box.h > 0:
-                        logger.info(f"[AutoBattle] -> [OK] 识别到节点: '{target_node}'")
-                        detected_node = target_node
-                        reco_result = current_reco_result
-                        break
+
+                    # RecognitionDetail.hit 表示是否命中；额外检查 box 保持向后兼容
+                    if getattr(current_reco_result, "hit", False):
+                        if current_reco_result.box and current_reco_result.box.w > 0 and current_reco_result.box.h > 0:
+                            logger.info(f"[AutoBattle] -> [OK] 识别到节点: '{target_node}'")
+                            detected_node = target_node
+                            reco_result = current_reco_result
+                            break
+                        else:
+                            # hit 为 True 但没有有效 box 时，也认为命中（容错）
+                            logger.info(f"[AutoBattle] -> [OK] 识别到节点(无 box): '{target_node}'")
+                            detected_node = target_node
+                            reco_result = current_reco_result
+                            break
                     else:
                         logger.debug(f"[AutoBattle] -> [X] 未识别到节点: '{target_node}'")
                 

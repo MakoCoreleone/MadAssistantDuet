@@ -335,9 +335,9 @@ class JsonActionSequence(CustomAction):
                     time.sleep(wait_time)
                 
                 # 执行按键操作
-                current_relative_time = time.time() - start_time
-                logger.debug(f"[{sequence_name}] 动作 {i+1:2d}/{len(actions)}: {action_type:8} {self._key_to_str(key):5} "
-                          f"(计划: {action_time:6.3f}s, 实际: {current_relative_time:6.3f}s)")
+                # current_relative_time = time.time() - start_time
+                # logger.debug(f"[{sequence_name}] 动作 {i+1:2d}/{len(actions)}: {action_type:8} {self._key_to_str(key):5} "
+                #           f"(计划: {action_time:6.3f}s, 实际: {current_relative_time:6.3f}s)")
                 
                 # 执行按键操作
                 controller = context.tasker.controller
